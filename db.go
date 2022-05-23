@@ -6,7 +6,21 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/gofiber/websocket/v2"
 )
+
+func Delete(id string) error {
+
+	var err error
+
+	if _, err = db.Query(`DELETE FROM messages WHERE id = $1`, id); err != nil {
+		return err
+	}
+
+	return nil
+
+}
 
 func parseArray(jsonBuffer []byte) ([]string, error) {
 	var ids []string
@@ -55,7 +69,7 @@ func getUUID() ([]string, error) {
 	return ids, nil
 }
 
-func MakeMessage(content string) error {
+func MakeMessage(content string, c *websocket.Conn) error {
 
 	var (
 		ids []string
@@ -71,6 +85,13 @@ func MakeMessage(content string) error {
 	if _, err = db.Exec(query); err != nil {
 		return err
 	}
+
+	broadcast <- message{
+		content,
+		c,
+	}
+
+	go Delete(ids[0])
 
 	return nil
 

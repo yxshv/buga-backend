@@ -33,10 +33,6 @@ func main() {
 
 	app := fiber.New()
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hi")
-	})
-
 	go WebsocketHub()
 
 	app.Get("/ws", websocket.New(func(c *websocket.Conn) {

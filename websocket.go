@@ -40,4 +40,21 @@ func WebSocket(c *websocket.Conn) {
 	}()
 
 	register <- c
+
+	for {
+		mt, m, err := c.ReadMessage()
+		if err != nil {
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+				log.Println("read error:", err)
+			}
+
+			return // Calls the deferred function, i.e. closes the connection on error
+		}
+
+		if mt == websocket.TextMessage {
+			MakeMessage(string(m), c)
+		} else {
+			log.Println("websocket message received of type", mt)
+		}
+	}
 }
