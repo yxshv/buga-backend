@@ -36,10 +36,25 @@ func main() {
 	go WebsocketHub()
 
 	app.Get("/ws", websocket.New(func(c *websocket.Conn) {
-
 		WebSocket(c)
-
 	}))
+
+	app.Get("/message/get", func(c *fiber.Ctx) error {
+		var (
+			r   []string
+			err error
+		)
+
+		if r, err = GetMessages(); err != nil {
+			log.Println("Error while getting messages: ", err)
+			return err
+		}
+
+		return c.JSON(fiber.Map{
+			"messages": r,
+		})
+
+	})
 
 	log.Fatal(app.Listen(":3000"))
 }
