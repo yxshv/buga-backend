@@ -1,4 +1,4 @@
-module github.com/kekda-py/buuga-backend
+module github.com/kekda-py/buga-backend
 
 go 1.18
 
