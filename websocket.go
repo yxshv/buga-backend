@@ -6,6 +6,18 @@ import (
 	"github.com/gofiber/websocket/v2"
 )
 
+
+func MakeMessage(content string, c *websocket.Conn) error {
+
+	broadcast <- message{
+		content,
+		c,
+	}
+
+	return nil
+
+}
+
 func WebsocketHub() {
 	for {
 		select {
